@@ -1,7 +1,20 @@
 package com.game.toe;
 
 public class Computer implements Player {
-    private String name;
+    public Computer(char token) {
+        this.token = token;
+    }
+
+    public void setName(int difficulty) {
+        if(difficulty == 1)
+            this.name = "Computer (random)";
+        if(difficulty == 2)
+            this.name = "Computer (medium)";
+        if(difficulty == 3)
+            this.name = "Computer (hard)";
+    }
+
+    private String name = "Computer";
 
     @Override
     public void setToken(char token) {

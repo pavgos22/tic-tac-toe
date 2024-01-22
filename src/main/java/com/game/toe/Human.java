@@ -1,7 +1,5 @@
 package com.game.toe;
 
-import java.util.Scanner;
-
 public class Human implements Player {
     private String name;
     private char token;
@@ -19,6 +17,11 @@ public class Human implements Player {
         this.token = token;
     }
 
+    @Override
+    public void setName(int difficulty) {
+        this.name = name;
+    }
+
     public Human(String name, char token) {
         this.name = name;
         this.token = token;
@@ -34,7 +37,6 @@ public class Human implements Player {
 
             if (Board.checkField(posX, posY)) {
                 Board.setField(posX, posY, token);
-                Board.printBoard();
                 moveDone = true;
             } else {
                 System.out.println("This field is taken, please choose another");

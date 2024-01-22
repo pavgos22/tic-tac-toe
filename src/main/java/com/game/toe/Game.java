@@ -60,6 +60,10 @@ public class Game {
         p2.setToken(temp);
     }
 
+    public void menu() {
+        setup();
+    }
+
 
     public void printGameIntro() {
         System.out.println("Tic-Tac-Toe Game");
@@ -90,29 +94,51 @@ public class Game {
     }
 
     void pvpIntro() {
-        System.out.print("Enter name of a first player: ");
+        System.out.print("Enter name of the first player: ");
         String pl1 = input.next();
-        System.out.print("Enter name of a second player: ");
+        char firstToken = chooseToken(pl1);
+
+        System.out.print("Enter name of the second player: ");
         String pl2 = input.next();
-        char firstToken;
-        char secondToken;
-        while (true) {
-            System.out.print("Enter " + pl1 + "'s token (O/X): ");
-            firstToken = input.next().toUpperCase().charAt(0);
-            if (firstToken == 'X' || firstToken == 'O') {
-                break;
-            } else
-                System.out.println("Invalid token. Please enter 'O' or 'X'.");
-        }
-        if (firstToken == 'X') secondToken = 'O';
-        else secondToken = 'X';
+        char secondToken = (firstToken == 'X') ? 'O' : 'X';
 
         p1 = new Human(pl1, firstToken);
         p2 = new Human(pl2, secondToken);
 
+        printPlayersToken();
+    }
+
+    void pvrandomIntro() {
+        System.out.print("Enter your name: ");
+        String pl1 = input.next();
+        char firstToken = chooseToken(pl1);
+        char secondToken = (firstToken == 'X') ? 'O' : 'X';
+
+        p1 = new Human(pl1, firstToken);
+        p2 = new Computer(secondToken);
+        p2.setName(difficulty);
+
+        printPlayersToken();
+    }
+
+    private char chooseToken(String playerName) {
+        char token;
+        while (true) {
+            System.out.print("Enter " + playerName + "'s token (O/X): ");
+            token = input.next().toUpperCase().charAt(0);
+            if (token == 'X' || token == 'O') {
+                return token;
+            } else {
+                System.out.println("Invalid token. Please enter 'O' or 'X'.");
+            }
+        }
+    }
+
+    private void printPlayersToken() {
         System.out.println(p1.getName() + ": " + p1.getToken());
         System.out.println(p2.getName() + ": " + p2.getToken());
     }
+
 
     void won(Player p) {
         p.setScore(p.getScore()+1);
@@ -147,37 +173,73 @@ public class Game {
             exit = true;
     }
 
+    void difficultyChoice() {
+        System.out.println("Select difficulty");
+        System.out.println("1. Easy");
+        System.out.println("2. Normal");
+        System.out.println("3. Hard");
+        int choice = input.nextInt();
+        switch(choice) {
+            case 1:
+                difficulty = 1;
+                pvrandomIntro();
+                break;
+            default:
+                System.out.println(choice + " is not an option, please type 1, 2 or 3");
+                difficultyChoice();
+                break;
+        }
+    }
+
     void setup() {
         printGameIntro();
         gameIntro();
-        //TODO: add more gamemodes
+        if(gameMode == 1) {
+            difficultyChoice();
+        }
         if(gameMode == 2) {
             pvpIntro();
         }
     }
 
     public void run() {
-        printScore();
-        Board.printBoard();
+        if(gameMode == 2) Board.printBoard();
         while (!exit) {
-            p1.move();
-            if (Board.checkWin(p1.getToken())) {
-                won(p1);
-                break;
-            } else if (Board.getFieldsLeft() == 0) {
-                draw();
+            makeMove(p1);
+            if (checkEndGame(p1)) {
                 break;
             }
 
-            p2.move();
-            if (Board.checkWin(p2.getToken())) {
-                won(p2);
-                break;
-            } else if (Board.getFieldsLeft() == 0) {
-                draw();
+            makeMove(p2);
+            if (checkEndGame(p2)) {
                 break;
             }
         }
         newGame();
+    }
+
+
+    private void makeMove(Player player) {
+        if(gameMode == 2) {
+            Board.printBoard();
+            player.move();
+        }
+        else {
+            player.move();
+            if(player instanceof Computer) Board.printBoard();
+        }
+    }
+
+    private boolean checkEndGame(Player player) {
+        if (Board.checkWin(player.getToken())) {
+            won(player);
+            exit = true;
+            return true;
+        } else if (Board.getFieldsLeft() == 0) {
+            draw();
+            exit = true;
+            return true;
+        }
+        return false;
     }
 }
