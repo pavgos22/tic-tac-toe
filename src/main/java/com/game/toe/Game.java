@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Game {
     private Player p1, p2;
+    private Player activePlayer;
     private int gameMode;
     private int difficulty;
     private boolean exit = false;
@@ -49,6 +50,11 @@ public class Game {
     public void setExit(boolean exit) {
         this.exit = exit;
     }
+
+    private void setActivePlayer() {
+        activePlayer = (p1.getToken() == 'O') ? p1 : p2;
+    }
+
 
     public Game() {
 
@@ -105,6 +111,8 @@ public class Game {
         p1 = new Human(pl1, firstToken);
         p2 = new Human(pl2, secondToken);
 
+        setActivePlayer();
+
         printPlayersToken();
     }
 
@@ -117,6 +125,8 @@ public class Game {
         p1 = new Human(pl1, firstToken);
         p2 = new Computer(secondToken);
         p2.setName(difficulty);
+
+        setActivePlayer();
 
         printPlayersToken();
     }
@@ -156,21 +166,30 @@ public class Game {
         System.out.println(p2.getName() + ": " + p2.getScore());
     }
 
-    void newGame() {
+    void endOfGame() {
         printScore();
         System.out.println();
         System.out.println("Press N to start new game");
+        System.out.println("Press M to go back to menu");
         System.out.println("Press X to exit");
 
         char choice = input.next().charAt(0);
-        if(choice == 'n' || choice == 'N') {
-            Board.clearBoard();
-            swapTokens(p1, p2);
-            System.out.println("The tokens have switched");
-            pause = false;
-        }
-        else if(choice == 'x' || choice == 'X')
+        if (choice == 'n' || choice == 'N')
+            newGame();
+        else if (choice == 'm' || choice == 'M')
+            setup();
+        else if (choice == 'x' || choice == 'X')
             exit = true;
+
+    }
+
+    void newGame() {
+        Board.clearBoard();
+        swapTokens(p1, p2);
+        System.out.println("The tokens have switched");
+        setActivePlayer();
+        exit = false;
+        run();
     }
 
     void difficultyChoice() {
@@ -192,6 +211,7 @@ public class Game {
     }
 
     void setup() {
+        Board.clearBoard();
         printGameIntro();
         gameIntro();
         if(gameMode == 1) {
@@ -200,44 +220,29 @@ public class Game {
         if(gameMode == 2) {
             pvpIntro();
         }
+        else
+            exit = true;
     }
 
     public void run() {
         if(gameMode == 2) Board.printBoard();
         while (!exit) {
-            makeMove(p1);
-            if (checkEndGame(p1)) {
+            if(gameMode == 2) Board.printBoard();
+            activePlayer.move();
+            if(activePlayer instanceof Computer) Board.printBoard();
+            if (checkEndGame(activePlayer))
                 break;
-            }
-
-            makeMove(p2);
-            if (checkEndGame(p2)) {
-                break;
-            }
+            activePlayer = (activePlayer == p1) ? p2 : p1;
         }
-        newGame();
-    }
-
-
-    private void makeMove(Player player) {
-        if(gameMode == 2) {
-            Board.printBoard();
-            player.move();
-        }
-        else {
-            player.move();
-            if(player instanceof Computer) Board.printBoard();
-        }
+        if (!exit) endOfGame();
     }
 
     private boolean checkEndGame(Player player) {
         if (Board.checkWin(player.getToken())) {
             won(player);
-            exit = true;
             return true;
         } else if (Board.getFieldsLeft() == 0) {
             draw();
-            exit = true;
             return true;
         }
         return false;
