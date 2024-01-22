@@ -5,9 +5,12 @@ public class Main {
         Game game = new Game();
         game.setup();
 
-        while(!game.isExit()){
+        while(!game.isExit()) {
             game.run();
         }
-
     }
 }
+
+//TODO: Menu
+//TODO: Computer AI
+//TODO: Who starts?

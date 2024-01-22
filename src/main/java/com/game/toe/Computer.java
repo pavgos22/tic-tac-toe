@@ -2,6 +2,12 @@ package com.game.toe;
 
 public class Computer implements Player {
     private String name;
+
+    @Override
+    public void setToken(char token) {
+        this.token = token;
+    }
+
     private char token;
     private int score = 0;
 

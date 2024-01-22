@@ -7,6 +7,7 @@ public interface Player {
 
     int getScore();
     void setScore(int score);
+    void setToken(char token);
     void move();
     char getToken();
     String getName();

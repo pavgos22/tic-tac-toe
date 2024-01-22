@@ -1,7 +1,18 @@
 package com.game.toe;
 
+
 public class Board {
     private static char[][] board = new char[3][3];
+
+    public static int getFieldsLeft() {
+        return fieldsLeft;
+    }
+
+    public static void setFieldsLeft(int fieldsLeft) {
+        Board.fieldsLeft = fieldsLeft;
+    }
+
+    private static int fieldsLeft = 9;
 
     public static char[][] getBoard() {
         return board;
@@ -13,10 +24,20 @@ public class Board {
 
     public static void setField(int x, int y, char c) {
         board[x][y] = c;
+        fieldsLeft--;
     }
 
     public static char getField(int x, int y) {
         return board[x][y];
+    }
+
+    public static void clearBoard() {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                board[i][j] = ' ';
+            }
+        }
+        setFieldsLeft(9);
     }
 
     public static boolean checkField(int x, int y) {

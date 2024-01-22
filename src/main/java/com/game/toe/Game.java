@@ -1,7 +1,5 @@
 package com.game.toe;
 
-import com.game.util.InputScanner;
-
 import java.util.Scanner;
 
 public class Game {
@@ -10,6 +8,7 @@ public class Game {
     private int difficulty;
     private boolean exit = false;
     private boolean pause = false;
+    public static Scanner input = new Scanner(System.in);
 
     public Player getP1() {
         return p1;
@@ -55,6 +54,13 @@ public class Game {
 
     }
 
+    public static void swapTokens(Player p1, Player p2) {
+        char temp = p1.getToken();
+        p1.setToken(p2.getToken());
+        p2.setToken(temp);
+    }
+
+
     public void printGameIntro() {
         System.out.println("Tic-Tac-Toe Game");
         System.out.println("-----------------");
@@ -65,7 +71,6 @@ public class Game {
     }
 
     public void gameIntro() {
-        Scanner input = InputScanner.getScanner();
         int choice = input.nextInt();
 
         switch (choice) {
@@ -82,20 +87,17 @@ public class Game {
                 System.out.println(choice + " is not an option, please select 1, 2 or 3");
                 break;
         }
-        input.close();
     }
 
     void pvpIntro() {
-        Scanner input = InputScanner.getScanner();
-        System.out.println("Enter name of a first player: ");
+        System.out.print("Enter name of a first player: ");
         String pl1 = input.next();
-        System.out.println("Enter name of a second player: ");
+        System.out.print("Enter name of a second player: ");
         String pl2 = input.next();
-        System.out.println("Enter " + pl1 + "'s token(O/X): ");
         char firstToken;
         char secondToken;
         while (true) {
-            System.out.println("Enter " + pl1 + "'s token (O/X): ");
+            System.out.print("Enter " + pl1 + "'s token (O/X): ");
             firstToken = input.next().toUpperCase().charAt(0);
             if (firstToken == 'X' || firstToken == 'O') {
                 break;
@@ -110,7 +112,6 @@ public class Game {
 
         System.out.println(p1.getName() + ": " + p1.getToken());
         System.out.println(p2.getName() + ": " + p2.getToken());
-        input.close();
     }
 
     void won(Player p) {
@@ -119,15 +120,8 @@ public class Game {
         pause = true;
     }
 
-    void makeMove() {
-        p1.move();
-        p2.move();
-        if(Board.checkWin(p1.getToken())) {
-            won(p1);
-        }
-        if(Board.checkWin(p2.getToken())) {
-            won(p2);
-        }
+    void draw() {
+        System.out.println("Draw!");
     }
 
     void printScore() {
@@ -137,34 +131,53 @@ public class Game {
     }
 
     void newGame() {
+        printScore();
         System.out.println();
         System.out.println("Press N to start new game");
         System.out.println("Press X to exit");
 
-        Scanner input = InputScanner.getScanner();
         char choice = input.next().charAt(0);
-        if(choice == 'n' || choice == 'N')
+        if(choice == 'n' || choice == 'N') {
+            Board.clearBoard();
+            swapTokens(p1, p2);
+            System.out.println("The tokens have switched");
             pause = false;
+        }
         else if(choice == 'x' || choice == 'X')
             exit = true;
-
     }
 
     void setup() {
         printGameIntro();
         gameIntro();
         //TODO: add more gamemodes
-        if(gameMode == 2){
+        if(gameMode == 2) {
             pvpIntro();
         }
     }
 
-    void run() {
-        if(!pause) {
-            Board.printBoard();
-            makeMove();
-            printScore();
-            newGame();
+    public void run() {
+        printScore();
+        Board.printBoard();
+        while (!exit) {
+            p1.move();
+            if (Board.checkWin(p1.getToken())) {
+                won(p1);
+                break;
+            } else if (Board.getFieldsLeft() == 0) {
+                draw();
+                break;
+            }
+
+            p2.move();
+            if (Board.checkWin(p2.getToken())) {
+                won(p2);
+                break;
+            } else if (Board.getFieldsLeft() == 0) {
+                draw();
+                break;
+            }
         }
+        newGame();
     }
 }
