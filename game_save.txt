@@ -1,0 +1,7 @@
+  O   
+O X   
+      
+1, 1
+oio,X,0
+Computer (random),O,0
+oio

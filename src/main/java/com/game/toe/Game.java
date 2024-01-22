@@ -1,11 +1,15 @@
 package com.game.toe;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Game {
     private Player p1, p2;
     private Player activePlayer;
-    private int gameMode;
+    private int gameMode = 0;
     private int difficulty;
     private boolean exit = false;
     private boolean pause = false;
@@ -66,18 +70,14 @@ public class Game {
         p2.setToken(temp);
     }
 
-    public void menu() {
-        setup();
-    }
-
-
     public void printGameIntro() {
         System.out.println("Tic-Tac-Toe Game");
         System.out.println("-----------------");
         System.out.println("Select Mode: ");
         System.out.println("1. Player vs Computer");
         System.out.println("2. Player vs Player");
-        System.out.println("3. Exit");
+        System.out.println("3. Load Game");
+        System.out.println("4. Exit");
     }
 
     public void gameIntro() {
@@ -91,6 +91,10 @@ public class Game {
                 gameMode = 2;
                 break;
             case 3:
+                loadGame("game_save.txt");
+                System.out.println("Game loaded.");
+                break;
+            case 4:
                 exit = true;
                 break;
             default:
@@ -183,7 +187,7 @@ public class Game {
 
     }
 
-    void newGame() {
+    void newGame() { // starting another game
         Board.clearBoard();
         swapTokens(p1, p2);
         System.out.println("The tokens have switched");
@@ -217,7 +221,7 @@ public class Game {
         if(gameMode == 1) {
             difficultyChoice();
         }
-        if(gameMode == 2) {
+        else if(gameMode == 2) {
             pvpIntro();
         }
         else
@@ -225,14 +229,27 @@ public class Game {
     }
 
     public void run() {
-        if(gameMode == 2) Board.printBoard();
         while (!exit) {
-            if(gameMode == 2) Board.printBoard();
-            activePlayer.move();
-            if(activePlayer instanceof Computer) Board.printBoard();
-            if (checkEndGame(activePlayer))
-                break;
-            activePlayer = (activePlayer == p1) ? p2 : p1;
+            System.out.print("Enter 'S' to save game, 'L' to load game, or press Enter to continue: ");
+
+            String inputLine = input.nextLine().trim();
+            if (inputLine.equalsIgnoreCase("S")) {
+                saveGame("game_save.txt");
+                System.out.println("Game saved.");
+            }
+            else if (inputLine.equalsIgnoreCase("L")) {
+                loadGame("game_save.txt");
+                System.out.println("Game loaded.");
+            }
+            else {
+                if(gameMode == 2) Board.printBoard();
+                activePlayer.move();
+                if(activePlayer instanceof Computer) Board.printBoard();
+                if (checkEndGame(activePlayer))
+                    break;
+
+                activePlayer = (activePlayer == p1) ? p2 : p1;
+            }
         }
         if (!exit) endOfGame();
     }
@@ -246,5 +263,83 @@ public class Game {
             return true;
         }
         return false;
+    }
+
+    public void saveGame(String filename) {
+        try (FileWriter writer = new FileWriter(filename)) {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    writer.write(Board.getField(i, j) + " ");
+                }
+                writer.write("\n");
+            }
+
+            writer.write(gameMode +  ", " + difficulty + "\n");
+
+            writer.write(p1.getName() + "," + p1.getToken() + "," + p1.getScore() + "\n");
+            writer.write(p2.getName() + "," + p2.getToken() + "," + p2.getScore() + "\n");
+
+            String currentPlayer = (activePlayer == p1) ? p1.getName() : p2.getName();
+            writer.write(currentPlayer + "\n");
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving the game.");
+            e.printStackTrace();
+        }
+    }
+
+    public void loadGame(String filename) {
+        try (Scanner scanner = new Scanner(new File(filename))) {
+
+            for (int i = 0; i < 3; i++) {
+                if (scanner.hasNextLine()) {
+                    String[] line = scanner.nextLine().trim().split(" ");
+                    if (line.length >= 3) {
+                        for (int j = 0; j < 3; j++) {
+                            Board.setField(i, j, line[j].charAt(0));
+                        }
+                    }
+                }
+            }
+
+            if (scanner.hasNextLine()) {
+                String[] gameStateInfo = scanner.nextLine().split(",");
+                if (gameStateInfo.length >= 2) {
+                    gameMode = Integer.parseInt(gameStateInfo[0].trim());
+                    difficulty = Integer.parseInt(gameStateInfo[1].trim());
+                }
+            }
+
+            if (scanner.hasNextLine()) {
+                String[] p1Info = scanner.nextLine().split(",");
+                if (p1Info.length >= 3) {
+                    p1 = new Human(p1Info[0].trim(), p1Info[1].charAt(0));
+                    p1.setScore(Integer.parseInt(p1Info[2].trim()));
+                }
+            }
+
+            if (scanner.hasNextLine()) {
+                String[] p2Info = scanner.nextLine().split(",");
+                if (p2Info.length >= 3) {
+                    if (gameMode == 1) {
+                        p2 = new Computer(p2Info[1].charAt(0));
+                        p2.setName(difficulty);
+                    } else {
+                        p2 = new Human(p2Info[0].trim(), p2Info[1].charAt(0));
+                    }
+                    p2.setScore(Integer.parseInt(p2Info[2].trim()));
+                }
+            }
+
+            if (scanner.hasNextLine()) {
+                String currentPlayerName = scanner.nextLine().trim();
+                activePlayer = (p1.getName().equals(currentPlayerName)) ? p1 : p2;
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Game file not found.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("An error occurred while loading the game.");
+            e.printStackTrace();
+        }
     }
 }

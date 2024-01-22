@@ -11,6 +11,6 @@ public class Main {
     }
 }
 
-//TODO: Menu
 //TODO: Computer AI
-//TODO: Who starts?
+//TODO: Fix load
+//TODO: Testing
