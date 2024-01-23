@@ -11,6 +11,7 @@ public class Main {
     }
 }
 
-//TODO: Computer AI
+//TODO: Custom size board
+//TODO: Min-max
 //TODO: Fix load
 //TODO: Testing

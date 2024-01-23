@@ -91,8 +91,7 @@ public class Game {
                 gameMode = 2;
                 break;
             case 3:
-                loadGame("game_save.txt");
-                System.out.println("Game loaded.");
+                gameMode = 3;
                 break;
             case 4:
                 exit = true;
@@ -215,6 +214,7 @@ public class Game {
     }
 
     void setup() {
+        gameMode = 0; difficulty = 0;
         Board.clearBoard();
         printGameIntro();
         gameIntro();
@@ -224,13 +224,18 @@ public class Game {
         else if(gameMode == 2) {
             pvpIntro();
         }
+        else if(gameMode == 3) {
+            loadGame("game_save.txt");
+            System.out.println("Game loaded.");
+        }
         else
             exit = true;
     }
 
     public void run() {
         while (!exit) {
-            System.out.print("Enter 'S' to save game, 'L' to load game, or press Enter to continue: ");
+            if(activePlayer instanceof Human)
+                System.out.print("Enter 'S' to save game, 'L' to load game, or press Enter to continue: ");
 
             String inputLine = input.nextLine().trim();
             if (inputLine.equalsIgnoreCase("S")) {
