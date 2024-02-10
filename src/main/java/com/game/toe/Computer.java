@@ -40,6 +40,7 @@ public class Computer implements Player {
 
     @Override
     public void move() {
+        Game.incMoveNumber();
         int posX, posY;
         do {
             posX = getRandomPosition();

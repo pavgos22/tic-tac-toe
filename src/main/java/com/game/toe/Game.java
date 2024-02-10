@@ -11,9 +11,13 @@ public class Game {
     private Player activePlayer;
     private int gameMode = 0;
     private int difficulty;
+    private static int moveNumber = 0;
     private boolean exit = false;
     private boolean pause = false;
     public static Scanner input = new Scanner(System.in);
+
+    public int getMoveNumber() { return moveNumber; }
+    public static void incMoveNumber() { moveNumber++; }
 
     public Player getP1() {
         return p1;
@@ -187,6 +191,7 @@ public class Game {
     }
 
     void newGame() { // starting another game
+        moveNumber = 0;
         Board.clearBoard();
         swapTokens(p1, p2);
         System.out.println("The tokens have switched");
@@ -236,6 +241,8 @@ public class Game {
         while (!exit) {
             if(activePlayer instanceof Human)
                 System.out.print("Enter 'S' to save game, 'L' to load game, or press Enter to continue: ");
+            if(moveNumber == 0)
+                System.out.println();
 
             String inputLine = input.nextLine().trim();
             if (inputLine.equalsIgnoreCase("S")) {
@@ -293,6 +300,7 @@ public class Game {
     }
 
     public void loadGame(String filename) {
+
         try (Scanner scanner = new Scanner(new File(filename))) {
 
             for (int i = 0; i < 3; i++) {

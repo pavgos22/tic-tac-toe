@@ -28,6 +28,7 @@ public class Human implements Player {
     }
     @Override
     public void move() {
+        Game.incMoveNumber();
         boolean moveDone = false;
         while (!moveDone) {
             System.out.print("Choose x position for " + this.name + "[" + this.token + "]: ");
