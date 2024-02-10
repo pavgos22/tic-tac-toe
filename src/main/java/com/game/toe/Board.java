@@ -1,90 +1,107 @@
 package com.game.toe;
 
-
 public class Board {
-    private static char[][] board = new char[3][3];
+    private char[][] board;
+    private int fieldsLeft;
+    private final int size;
+    public Board(int size) {
+        this.size = size;
+        this.fieldsLeft = size * size;
+        this.board = new char[size][size];
+        clearBoard();
+    }
 
-    public static int getFieldsLeft() {
+    public int getSize() {
+        return size;
+    }
+
+    public int getFieldsLeft() {
         return fieldsLeft;
     }
 
-    public static void setFieldsLeft(int fieldsLeft) {
-        Board.fieldsLeft = fieldsLeft;
+    public void setField(int x, int y, char c) {
+        if (x >= 0 && x < size && y >= 0 && y < size) {
+            board[x][y] = c;
+            fieldsLeft--;
+        }
     }
 
-    private static int fieldsLeft = 9;
-
-    public static char[][] getBoard() {
-        return board;
+    public char getField(int x, int y) {
+        if (x >= 0 && x < size && y >= 0 && y < size) {
+            return board[x][y];
+        }
+        return '\0';
     }
 
-    public static void setBoard(char[][] newBoard) {
-        board = newBoard;
-    }
-
-    public static void setField(int x, int y, char c) {
-        board[x][y] = c;
-        fieldsLeft--;
-    }
-
-    public static char getField(int x, int y) {
-        return board[x][y];
-    }
-
-    public static void clearBoard() {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
+    public void clearBoard() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 board[i][j] = ' ';
             }
         }
-        setFieldsLeft(9);
+        fieldsLeft = size * size;
     }
 
-    public static boolean checkField(int x, int y) {
-        if(board[x][y] == ' ')
-            return true;
-        else return false;
-    }
-
-    static {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                board[i][j] = ' ';
-            }
+    public boolean checkField(int x, int y) {
+        if (x >= 0 && x < size && y >= 0 && y < size) {
+            return board[x][y] == ' ';
         }
-    }
-
-    public static boolean checkWin(char playerToken) {
-        for (int i = 0; i < 3; i++) {
-            if (board[i][0] == playerToken && board[i][1] == playerToken && board[i][2] == playerToken) {
-                return true;
-            }
-        }
-
-        for (int j = 0; j < 3; j++) {
-            if (board[0][j] == playerToken && board[1][j] == playerToken && board[2][j] == playerToken) {
-                return true;
-            }
-        }
-
-        if (board[0][0] == playerToken && board[1][1] == playerToken && board[2][2] == playerToken) {
-            return true;
-        }
-        if (board[0][2] == playerToken && board[1][1] == playerToken && board[2][0] == playerToken) {
-            return true;
-        }
-
         return false;
     }
 
-    public static void printBoard() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+    public boolean checkWin(char playerToken) {
+        for (int i = 0; i < size; i++) {
+            boolean win = true;
+            for (int j = 0; j < size; j++) {
+                if (board[i][j] != playerToken) {
+                    win = false;
+                    break;
+                }
+            }
+            if (win) return true;
+        }
+
+        for (int j = 0; j < size; j++) {
+            boolean win = true;
+            for (int i = 0; i < size; i++) {
+                if (board[i][j] != playerToken) {
+                    win = false;
+                    break;
+                }
+            }
+            if (win) return true;
+        }
+
+        boolean win = true;
+        for (int i = 0; i < size; i++) {
+            if (board[i][i] != playerToken) {
+                win = false;
+                break;
+            }
+        }
+        if (win) return true;
+
+        win = true;
+        for (int i = 0; i < size; i++) {
+            if (board[i][size - 1 - i] != playerToken) {
+                win = false;
+                break;
+            }
+        }
+        return win;
+    }
+
+    public void printBoard() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 System.out.print("|" + board[i][j]);
             }
             System.out.println("|");
-            if (i < 2) {
-                System.out.println("-------");
+            if (i < size - 1) {
+                for (int j = 0; j < size; j++) {
+                    System.out.print("--");
+                }
+                System.out.println("-");
             }
         }
     }

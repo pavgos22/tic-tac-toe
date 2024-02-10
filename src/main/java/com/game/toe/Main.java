@@ -11,7 +11,6 @@ public class Main {
     }
 }
 
-//TODO: Custom size board
 //TODO: Min-max
 //TODO: Fix load
 //TODO: UI

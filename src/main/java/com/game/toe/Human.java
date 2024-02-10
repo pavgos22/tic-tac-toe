@@ -4,6 +4,7 @@ public class Human implements Player {
     private String name;
     private char token;
     private int score = 0;
+    private Game game;
     @Override
     public int getScore() {
         return score;
@@ -22,9 +23,10 @@ public class Human implements Player {
         this.name = name;
     }
 
-    public Human(String name, char token) {
+    public Human(String name, char token, Game game) {
         this.name = name;
         this.token = token;
+        this.game = game;
     }
     @Override
     public void move() {
@@ -36,8 +38,8 @@ public class Human implements Player {
             System.out.print("Choose y position for " + this.name + "[" + this.token + "]: ");
             int posY = readValidPosition();
 
-            if (Board.checkField(posX, posY)) {
-                Board.setField(posX, posY, token);
+            if (game.getBoard().checkField(posX, posY)) {
+                game.getBoard().setField(posX, posY, token);
                 moveDone = true;
             } else {
                 System.out.println("This field is taken, please choose another");
@@ -49,7 +51,7 @@ public class Human implements Player {
         while (true) {
             if (Game.input.hasNextInt()) {
                 int position = Game.input.nextInt();
-                if (position >= 0 && position <= 2)
+                if (position >= 0 && position <= game.getBoard().getSize() - 1)
                     return position;
                 else
                     System.out.println("Invalid input. Please enter 0, 1, or 2.");

@@ -9,12 +9,21 @@ import java.util.Scanner;
 public class Game {
     private Player p1, p2;
     private Player activePlayer;
+    private Board board;
     private int gameMode = 0;
     private int difficulty;
     private static int moveNumber = 0;
     private boolean exit = false;
     private boolean pause = false;
     public static Scanner input = new Scanner(System.in);
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
 
     public int getMoveNumber() { return moveNumber; }
     public static void incMoveNumber() { moveNumber++; }
@@ -115,8 +124,8 @@ public class Game {
         String pl2 = input.next();
         char secondToken = (firstToken == 'X') ? 'O' : 'X';
 
-        p1 = new Human(pl1, firstToken);
-        p2 = new Human(pl2, secondToken);
+        p1 = new Human(pl1, firstToken, this);
+        p2 = new Human(pl2, secondToken, this);
 
         setActivePlayer();
 
@@ -129,8 +138,8 @@ public class Game {
         char firstToken = chooseToken(pl1);
         char secondToken = (firstToken == 'X') ? 'O' : 'X';
 
-        p1 = new Human(pl1, firstToken);
-        p2 = new Computer(secondToken);
+        p1 = new Human(pl1, firstToken, this);
+        p2 = new Computer(secondToken, this);
         p2.setName(difficulty);
 
         setActivePlayer();
@@ -192,7 +201,7 @@ public class Game {
 
     void newGame() { // starting another game
         moveNumber = 0;
-        Board.clearBoard();
+        board.clearBoard();
         swapTokens(p1, p2);
         System.out.println("The tokens have switched");
         setActivePlayer();
@@ -218,9 +227,15 @@ public class Game {
         }
     }
 
+    void boardSize() {
+        System.out.print("Select board size: ");
+        int size = input.nextInt();
+        Board board = new Board(size);
+        setBoard(board);
+    }
     void setup() {
         gameMode = 0; difficulty = 0;
-        Board.clearBoard();
+        boardSize();
         printGameIntro();
         gameIntro();
         if(gameMode == 1) {
@@ -254,9 +269,9 @@ public class Game {
                 System.out.println("Game loaded.");
             }
             else {
-                if(gameMode == 2) Board.printBoard();
+                if(gameMode == 2) board.printBoard();
                 activePlayer.move();
-                if(activePlayer instanceof Computer) Board.printBoard();
+                if(activePlayer instanceof Computer) board.printBoard();
                 if (checkEndGame(activePlayer))
                     break;
 
@@ -267,10 +282,10 @@ public class Game {
     }
 
     private boolean checkEndGame(Player player) {
-        if (Board.checkWin(player.getToken())) {
+        if (board.checkWin(player.getToken())) {
             won(player);
             return true;
-        } else if (Board.getFieldsLeft() == 0) {
+        } else if (board.getFieldsLeft() == 0) {
             draw();
             return true;
         }
@@ -281,7 +296,7 @@ public class Game {
         try (FileWriter writer = new FileWriter(filename)) {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-                    writer.write(Board.getField(i, j) + " ");
+                    writer.write(board.getField(i, j) + " ");
                 }
                 writer.write("\n");
             }
@@ -308,7 +323,7 @@ public class Game {
                     String[] line = scanner.nextLine().trim().split(" ");
                     if (line.length >= 3) {
                         for (int j = 0; j < 3; j++) {
-                            Board.setField(i, j, line[j].charAt(0));
+                            board.setField(i, j, line[j].charAt(0));
                         }
                     }
                 }
@@ -325,7 +340,7 @@ public class Game {
             if (scanner.hasNextLine()) {
                 String[] p1Info = scanner.nextLine().split(",");
                 if (p1Info.length >= 3) {
-                    p1 = new Human(p1Info[0].trim(), p1Info[1].charAt(0));
+                    p1 = new Human(p1Info[0].trim(), p1Info[1].charAt(0), this);
                     p1.setScore(Integer.parseInt(p1Info[2].trim()));
                 }
             }
@@ -334,10 +349,10 @@ public class Game {
                 String[] p2Info = scanner.nextLine().split(",");
                 if (p2Info.length >= 3) {
                     if (gameMode == 1) {
-                        p2 = new Computer(p2Info[1].charAt(0));
+                        p2 = new Computer(p2Info[1].charAt(0), this);
                         p2.setName(difficulty);
                     } else {
-                        p2 = new Human(p2Info[0].trim(), p2Info[1].charAt(0));
+                        p2 = new Human(p2Info[0].trim(), p2Info[1].charAt(0), this);
                     }
                     p2.setScore(Integer.parseInt(p2Info[2].trim()));
                 }

@@ -1,8 +1,9 @@
 package com.game.toe;
 
 public class Computer implements Player {
-    public Computer(char token) {
+    public Computer(char token, Game game) {
         this.token = token;
+        this.game = game;
     }
 
     public void setName(int difficulty) {
@@ -15,6 +16,8 @@ public class Computer implements Player {
     }
 
     private String name = "Computer";
+
+    private Game game;
 
     @Override
     public void setToken(char token) {
@@ -33,9 +36,10 @@ public class Computer implements Player {
         this.score = score;
     }
 
-    public Computer(String name, char token) {
+    public Computer(String name, char token, Game game) {
         this.name = name;
         this.token = token;
+        this.game = game;
     }
 
     @Override
@@ -45,13 +49,13 @@ public class Computer implements Player {
         do {
             posX = getRandomPosition();
             posY = getRandomPosition();
-        } while (!Board.checkField(posX, posY));
+        } while (!game.getBoard().checkField(posX, posY));
 
-        Board.setField(posX, posY, token);
+        game.getBoard().setField(posX, posY, token);
     }
 
     private int getRandomPosition() {
-        return (int) (Math.random() * 3);
+        return (int) (Math.random() * game.getBoard().getSize());
     }
 
     @Override
