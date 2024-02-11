@@ -12,6 +12,6 @@ public class Main {
 }
 
 //TODO: Min-max
-//TODO: Fix load
+//TODO: Fix save/load
 //TODO: UI
 //TODO: Testing

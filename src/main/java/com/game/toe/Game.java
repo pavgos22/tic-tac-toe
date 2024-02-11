@@ -220,6 +220,10 @@ public class Game {
                 difficulty = 1;
                 pvrandomIntro();
                 break;
+            case 2:
+                difficulty = 2;
+                pvrandomIntro();
+                break;
             default:
                 System.out.println(choice + " is not an option, please type 1, 2 or 3");
                 difficultyChoice();

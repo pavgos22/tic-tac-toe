@@ -156,4 +156,56 @@ public class GameLogicTestSuite {
             assertTrue(board.checkWin('X'));
         }
     }
+
+    @Nested
+    class TieConditions {
+        private Board board;
+
+        @BeforeEach
+        void setup() {
+            board = new Board(3); // Assuming a 3x3 board
+        }
+
+        @Test
+        void testForTieScenario1() {
+            // First tie scenario
+            // X|O|X
+            // O|X|O
+            // O|X|O
+            board.setField(0, 0, 'X');
+            board.setField(0, 1, 'O');
+            board.setField(0, 2, 'X');
+            board.setField(1, 0, 'O');
+            board.setField(1, 1, 'X');
+            board.setField(1, 2, 'O');
+            board.setField(2, 0, 'O');
+            board.setField(2, 1, 'X');
+            board.setField(2, 2, 'O');
+
+            assertFalse(board.checkWin('X'));
+            assertFalse(board.checkWin('O'));
+            assertEquals(0, board.getFieldsLeft());
+        }
+
+        @Test
+        void testForTieScenario2() {
+            // Second tie scenario
+            // O|X|O
+            // X|O|X
+            // X|O|X
+            board.setField(0, 0, 'O');
+            board.setField(0, 1, 'X');
+            board.setField(0, 2, 'O');
+            board.setField(1, 0, 'X');
+            board.setField(1, 1, 'O');
+            board.setField(1, 2, 'X');
+            board.setField(2, 0, 'X');
+            board.setField(2, 1, 'O');
+            board.setField(2, 2, 'X');
+
+            assertFalse(board.checkWin('X'));
+            assertFalse(board.checkWin('O'));
+            assertEquals(0, board.getFieldsLeft());
+        }
+    }
 }

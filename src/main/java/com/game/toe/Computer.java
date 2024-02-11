@@ -10,7 +10,7 @@ public class Computer implements Player {
         if(difficulty == 1)
             this.name = "Computer (random)";
         if(difficulty == 2)
-            this.name = "Computer (medium)";
+            this.name = "Computer (min-max)";
         if(difficulty == 3)
             this.name = "Computer (hard)";
     }
@@ -44,6 +44,13 @@ public class Computer implements Player {
 
     @Override
     public void move() {
+        if(game.getDifficulty() == 1)
+            randomMove();
+        else
+            bestMove();
+    }
+
+    public void randomMove() {
         Game.incMoveNumber();
         int posX, posY;
         do {
@@ -57,6 +64,70 @@ public class Computer implements Player {
     private int getRandomPosition() {
         return (int) (Math.random() * game.getBoard().getSize());
     }
+
+    private void bestMove() {
+        int bestScore = Integer.MIN_VALUE;
+        int bestX = -1;
+        int bestY = -1;
+        for(int i=0; i<game.getBoard().getSize(); i++) {
+            for(int j=0; j<game.getBoard().getSize(); j++) {
+                if(game.getBoard().getField(i, j) == ' ') {
+                    game.getBoard().setField(i, j, token);
+                    int score = minimax(game.getBoard(), 0, false);
+                    game.getBoard().setField(i, j, ' ');
+                    if(score > bestScore)
+                        bestScore = score;
+                        bestX = i;
+                        bestY = j;
+                }
+            }
+        }
+        game.getBoard().setField(bestX, bestY, this.token);
+    }
+
+    int minimax(Board board, int depth, boolean isMaximizing) {
+        if(game.getBoard().getFieldsLeft() != 0) {
+            if (game.getBoard().checkWin(token)) return 1;
+            else return -1;
+        }
+        if(game.getBoard().getFieldsLeft() == 0)
+            return 0;
+
+        if(isMaximizing) {
+            int bestScore = Integer.MIN_VALUE;
+            for(int i=0; i<game.getBoard().getSize(); i++) {
+                for(int j=0; j<game.getBoard().getSize(); j++) {
+                    if(game.getBoard().getField(i, j) == ' ') {
+                        game.getBoard().setField(i, j, this.token);
+                        int score = minimax(game.getBoard(), depth + 1, false);
+                        game.getBoard().setField(i, j, ' ');
+                            if(score > bestScore)
+                                bestScore = score;
+                    }
+                }
+            }
+            return bestScore;
+        }
+
+        else {
+            int bestScore = Integer.MAX_VALUE;
+            for(int i=0; i<game.getBoard().getSize(); i++) {
+                for(int j=0; j<game.getBoard().getSize(); j++) {
+                    if(game.getBoard().getField(i, j) == ' ') {
+                        game.getBoard().setField(i, j, game.getP1().getToken());
+                        int score = minimax(game.getBoard(), depth + 1, true);
+                        game.getBoard().setField(i, j, ' ');
+                        if(score < bestScore) {
+                            bestScore = score;
+                        }
+                    }
+                }
+            }
+            return bestScore;
+        }
+    }
+
+
 
     @Override
     public String getName() {
