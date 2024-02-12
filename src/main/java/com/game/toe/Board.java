@@ -91,10 +91,8 @@ public class Board {
         return win;
     }
 
-    boolean checkTie() {
-        if(fieldsLeft <= 0)
-            return true;
-        else return false;
+    public boolean checkTie() {
+        return fieldsLeft == 0 && !checkWin('X') && !checkWin('O');
     }
 
     public void printBoard() {

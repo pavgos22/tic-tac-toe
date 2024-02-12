@@ -73,12 +73,13 @@ public class Computer implements Player {
             for(int j=0; j<game.getBoard().getSize(); j++) {
                 if(game.getBoard().getField(i, j) == ' ') {
                     game.getBoard().setField(i, j, token);
-                    int score = minimax(0, false);
+                    int score = minimax(0, true);
                     game.getBoard().setField(i, j, ' ');
-                    if(score > bestScore)
+                    if(score > bestScore) {
                         bestScore = score;
                         bestX = i;
                         bestY = j;
+                    }
                 }
             }
         }
@@ -86,12 +87,11 @@ public class Computer implements Player {
     }
 
     int minimax(int depth, boolean isMaximizing) {
-        if(game.getBoard().getFieldsLeft() != 0) {
-            if (game.getBoard().checkWin(this.token)) return 1;
-            else return -1;
-        }
-        if(game.getBoard().checkTie())
-            return 0;
+        char opponentToken = (this.token == 'X') ? 'O' : 'X';
+
+        if (game.getBoard().checkWin(this.token)) return 1;
+        if (game.getBoard().checkWin(opponentToken)) return -1;
+        if (game.getBoard().checkTie()) return 0;
 
         if(isMaximizing) {
             int bestScore = Integer.MIN_VALUE;

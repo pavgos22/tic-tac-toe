@@ -182,7 +182,7 @@ public class GameLogicTestSuite {
 
             assertFalse(board.checkWin('X'));
             assertFalse(board.checkWin('O'));
-            assertEquals(0, board.getFieldsLeft());
+            assertTrue(board.checkTie());
         }
 
         @Test
@@ -203,7 +203,7 @@ public class GameLogicTestSuite {
 
             assertFalse(board.checkWin('X'));
             assertFalse(board.checkWin('O'));
-            assertEquals(0, board.getFieldsLeft());
+            assertTrue(board.checkTie());
         }
     }
 }
