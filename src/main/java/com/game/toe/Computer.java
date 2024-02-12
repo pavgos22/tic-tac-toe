@@ -73,7 +73,7 @@ public class Computer implements Player {
             for(int j=0; j<game.getBoard().getSize(); j++) {
                 if(game.getBoard().getField(i, j) == ' ') {
                     game.getBoard().setField(i, j, token);
-                    int score = minimax(game.getBoard(), 0, false);
+                    int score = minimax(0, false);
                     game.getBoard().setField(i, j, ' ');
                     if(score > bestScore)
                         bestScore = score;
@@ -85,12 +85,12 @@ public class Computer implements Player {
         game.getBoard().setField(bestX, bestY, this.token);
     }
 
-    int minimax(Board board, int depth, boolean isMaximizing) {
+    int minimax(int depth, boolean isMaximizing) {
         if(game.getBoard().getFieldsLeft() != 0) {
-            if (game.getBoard().checkWin(token)) return 1;
+            if (game.getBoard().checkWin(this.token)) return 1;
             else return -1;
         }
-        if(game.getBoard().getFieldsLeft() == 0)
+        if(game.getBoard().checkTie())
             return 0;
 
         if(isMaximizing) {
@@ -99,7 +99,7 @@ public class Computer implements Player {
                 for(int j=0; j<game.getBoard().getSize(); j++) {
                     if(game.getBoard().getField(i, j) == ' ') {
                         game.getBoard().setField(i, j, this.token);
-                        int score = minimax(game.getBoard(), depth + 1, false);
+                        int score = minimax(depth + 1, false);
                         game.getBoard().setField(i, j, ' ');
                             if(score > bestScore)
                                 bestScore = score;
@@ -115,7 +115,7 @@ public class Computer implements Player {
                 for(int j=0; j<game.getBoard().getSize(); j++) {
                     if(game.getBoard().getField(i, j) == ' ') {
                         game.getBoard().setField(i, j, game.getP1().getToken());
-                        int score = minimax(game.getBoard(), depth + 1, true);
+                        int score = minimax(depth + 1, true);
                         game.getBoard().setField(i, j, ' ');
                         if(score < bestScore) {
                             bestScore = score;

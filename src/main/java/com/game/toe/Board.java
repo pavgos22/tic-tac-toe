@@ -91,6 +91,12 @@ public class Board {
         return win;
     }
 
+    boolean checkTie() {
+        if(fieldsLeft <= 0)
+            return true;
+        else return false;
+    }
+
     public void printBoard() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {

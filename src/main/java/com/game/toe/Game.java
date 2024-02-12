@@ -172,10 +172,6 @@ public class Game {
         pause = true;
     }
 
-    void draw() {
-        System.out.println("Draw!");
-    }
-
     void printScore() {
         System.out.println("-----Score Table-----");
         System.out.println(p1.getName() + ": " + p1.getScore());
@@ -211,9 +207,8 @@ public class Game {
 
     void difficultyChoice() {
         System.out.println("Select difficulty");
-        System.out.println("1. Easy");
-        System.out.println("2. Normal");
-        System.out.println("3. Hard");
+        System.out.println("1. Easy (random)");
+        System.out.println("2. Hard (minimax algorithm)");
         int choice = input.nextInt();
         switch(choice) {
             case 1:
@@ -289,8 +284,8 @@ public class Game {
         if (board.checkWin(player.getToken())) {
             won(player);
             return true;
-        } else if (board.getFieldsLeft() == 0) {
-            draw();
+        } else if (board.checkTie()) {
+            System.out.println("Tie!");
             return true;
         }
         return false;
