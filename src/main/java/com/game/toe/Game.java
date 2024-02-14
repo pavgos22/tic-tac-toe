@@ -195,7 +195,7 @@ public class Game {
 
     }
 
-    void newGame() { // starting another game
+    void newGame() {
         moveNumber = 0;
         board.clearBoard();
         swapTokens(p1, p2);
